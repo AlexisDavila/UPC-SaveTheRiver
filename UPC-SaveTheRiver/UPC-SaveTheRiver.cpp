@@ -4,16 +4,27 @@
 using namespace System;
 using namespace std;
 
-void ConfiguracionInicial() {
-    Console::SetWindowSize(132, 40);
 
+void ConfiguracionBasica() {
+    Console::SetWindowSize(132, 40);
 }
 
-/*void define_color(int c){
-    HANDLE  hConsole;
-    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, c);
-}*/
+void ConfiguracionInicial(int* nvida, int *dificultad) {
+    // Ingreso de vidas por parte del usuario
+    do {
+        cout << "Ingrese cantidad de vidas entre 1 y 10: "; cin >> *nvida;
+    } while (*nvida < 1 || *nvida > 10);
+
+    // El usuario selecciona la dificultad del juego
+    do {
+        cout << "\n\tDificultad de juego" << endl;
+        cout << "\t-------------------" << endl;
+        cout << "  1.- Principiante\n  2.-Avanzado"<<endl;
+        cout << "\nIngrese opcion[1,2]: "; cin >> *dificultad;
+    } while (*dificultad < 1 || *dificultad > 2);
+    system("cls"); // Limpia la consola
+}
+
 void color(int X)
 {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), X);
@@ -128,17 +139,67 @@ void DibujaMapaNivel2() {
     }
 }
 
-int main()
-{
-    ConfiguracionInicial();
-    DibujaMapaNivel1();
-    DibujaMapaNivel2();
-
+void MostrarInfomacionActual() {
     Console::BackgroundColor = ConsoleColor::DarkBlue;
     Console::ForegroundColor = ConsoleColor::White;
     Console::SetCursorPosition(105, 4);
     cout << "UPC - SAVE THE RIVER";
     Console::SetCursorPosition(130, 30);
+}
+
+void DibujaJugador() {
+    int  jugador[6][3] = {
+        {8,8,8},
+        {7,7,7},
+        {0,8,0},
+        {0,8,0},
+        {2,2,2},
+        {8,0,8}
+    };
+    
+    for (int fila = 0; fila < 6; fila++) {
+        for (int columna = 0; columna < 3; columna++) {
+            if (jugador[fila][columna] == 0) { Console::BackgroundColor = ConsoleColor::Blue;  Console::ForegroundColor = ConsoleColor::White; }//color(8);
+            if (jugador[fila][columna] == 2) color(12);
+            if (jugador[fila][columna] == 7) color(13);
+            if (jugador[fila][columna] == 8) color(16);
+            if (jugador[fila][columna] == 9) color(25);
+
+            if (fila == 2 && (columna == 0 || columna == 2))
+            {
+                cout << (char)223;
+            }
+            else
+            {
+                cout << (char)219;
+            }
+        }
+        cout << endl;
+    }
+
+}
+
+int main()
+{
+    //Variables
+    int* vidas = new int;
+    int* dificultad = new int;
+    *vidas = 0;
+    *dificultad = 0;
+
+
+    ConfiguracionBasica();
+
+    ConfiguracionInicial(vidas, dificultad);
+
+    DibujaMapaNivel1();
+    //DibujaMapaNivel2();
+
+    //DibujaJugador();
+
+
+
+
     // Codigo para mostrar los colores
     /*for (int k = 1; k < 255; k++)
     {
