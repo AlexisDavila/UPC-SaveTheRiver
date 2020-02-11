@@ -28,6 +28,7 @@ void ConfiguracionInicial(int* nvida, int *dificultad) {
 void color(int X)
 {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), X);
+
 }
 
 void DibujaMapaNivel1() {
@@ -149,34 +150,36 @@ void MostrarInfomacionActual() {
 
 void DibujaJugador() {
     int  jugador[6][3] = {
-        {8,8,8},
-        {7,7,7},
-        {0,8,0},
-        {0,8,0},
+        {1,1,1},
         {2,2,2},
-        {8,0,8}
+        {0,2,0},
+        {0,2,0},
+        {3,3,3},
+        {2,0,2}
     };
-    
+    int x = 46;
+    int y = 34;
+
     for (int fila = 0; fila < 6; fila++) {
         for (int columna = 0; columna < 3; columna++) {
-            if (jugador[fila][columna] == 0) { Console::BackgroundColor = ConsoleColor::Blue;  Console::ForegroundColor = ConsoleColor::White; }//color(8);
-            if (jugador[fila][columna] == 2) color(12);
-            if (jugador[fila][columna] == 7) color(13);
-            if (jugador[fila][columna] == 8) color(16);
-            if (jugador[fila][columna] == 9) color(25);
-
-            if (fila == 2 && (columna == 0 || columna == 2))
-            {
-                cout << (char)223;
+        Console::SetCursorPosition(x+columna,y+fila);
+            if (jugador[fila][columna] == 0) { 
+                Console::BackgroundColor = ConsoleColor::Cyan;
+                Console::ForegroundColor = ConsoleColor::Cyan;
             }
-            else
-            {
+            if (jugador[fila][columna] == 2) color(13);//rosado
+            if (jugador[fila][columna] == 3) color(12);//rojo
+            if (jugador[fila][columna] == 1) color(16);// negro
+
+            if (fila == 2 && (columna == 0 || columna == 2)) {
+                color(189);
+                cout << (char)220;
+            } else {
                 cout << (char)219;
             }
         }
         cout << endl;
     }
-
 }
 
 int main()
@@ -187,15 +190,14 @@ int main()
     *vidas = 0;
     *dificultad = 0;
 
-
     ConfiguracionBasica();
 
-    ConfiguracionInicial(vidas, dificultad);
+    //ConfiguracionInicial(vidas, dificultad);
 
     DibujaMapaNivel1();
     //DibujaMapaNivel2();
 
-    //DibujaJugador();
+    DibujaJugador();
 
 
 
