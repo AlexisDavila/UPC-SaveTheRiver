@@ -1,9 +1,20 @@
-#include "pch.h"
+ #include "pch.h"
 #include "windows.h"
+
+#define DERECHA 77
+#define IZQUIERDA 75
+#define ABAJO 80
+#define ARRIBA 72
 
 using namespace System;
 using namespace std;
 
+struct Jugador
+{
+    int x, y;
+    int dx, dy;
+    int vidas;
+};
 
 void ConfiguracionBasica() {
     Console::SetWindowSize(132, 40);
@@ -148,7 +159,7 @@ void MostrarInfomacionActual() {
     Console::SetCursorPosition(130, 30);
 }
 
-void DibujaJugador() {
+void DibujaJugador(int x, int y) {
     int  jugador[6][3] = {
         {1,1,1},
         {2,2,2},
@@ -157,8 +168,8 @@ void DibujaJugador() {
         {3,3,3},
         {2,0,2}
     };
-    int x = 46;
-    int y = 34;
+    //int x = 46;
+    //int y = 34;
 
     for (int fila = 0; fila < 6; fila++) {
         for (int columna = 0; columna < 3; columna++) {
@@ -181,14 +192,87 @@ void DibujaJugador() {
         cout << endl;
     }
 }
+void DibujaAgente(int x, int y) {
+    int agente[3][7] = {
+        {0,0,0,0,90,0,0},
+        {10,0,0,10,10,10,0},
+        {10,10,10,10,10,10,10}
+    };
+    //int x = 30;
+    //int y = 20;
 
+    for (int fila = 0; fila < 3; fila++) {
+        for (int columna = 0; columna < 7; columna++) {
+            Console::SetCursorPosition(x + columna, y + fila);
+            if (agente[fila][columna] == 0) {
+                Console::ForegroundColor = ConsoleColor::Cyan;
+            }
+            if (agente[fila][columna] == 10) color(5);//morado
+            if (agente[fila][columna] == 90) color(16);//rojo
+
+            if (fila == 0 && columna == 4) {
+                color(189);
+                cout << (char)194;
+            }
+            else {
+                cout << (char)219;
+            }
+        }
+        cout << endl;
+    }
+}
+
+void BorrarAgente(int x, int y) {
+
+    //int x = 46;
+    //int y = 34;
+
+    for (int fila = 0; fila < 3; fila++) {
+        for (int columna = 0; columna < 7; columna++) {
+            Console::SetCursorPosition(x + columna, y + fila);
+            Console::ForegroundColor = ConsoleColor::Cyan;
+            cout << (char)219;
+        }
+        cout << endl;
+    }
+}
+
+void BorrarJugador(int x, int y) {
+    
+    //int x = 46;
+    //int y = 34;
+
+    for (int fila = 0; fila < 6; fila++) {
+        for (int columna = 0; columna < 3; columna++) {
+            Console::SetCursorPosition(x + columna, y + fila);
+            Console::ForegroundColor = ConsoleColor::Cyan;
+            cout << (char)219;
+        }
+        cout << endl;
+    }
+}
+void MoverJugador() {
+
+
+    
+}
 int main()
 {
     //Variables
-    int* vidas = new int;
+    Jugador *gamer = new Jugador;
+    gamer->x = 46;
+    gamer->y = 34;
+    gamer->dx = 1;
+    gamer->dy = 1;
+    gamer->vidas = 0;
+
+    /*int* vidas = new int;
+    *vidas = 0;*/
     int* dificultad = new int;
-    *vidas = 0;
     *dificultad = 0;
+
+    int x = 46;
+    int y = 34;
 
     ConfiguracionBasica();
 
@@ -196,10 +280,47 @@ int main()
 
     DibujaMapaNivel1();
     //DibujaMapaNivel2();
+    
 
-    DibujaJugador();
+    /*for (int i = 0; i < 6; i++)
+    {
+        DibujaJugador(x+i, y);
+        Sleep(500);
+        BorrarJugador(x+i,y);
+    }
+    if (true)
+    {
 
+    }
+    */
+    DibujaJugador(x, y);
+    char tecla;
+    while (1) {
+        if (_kbhit()) {
+            tecla = _getch();
+            //borrar
+            //Console::SetCursorPosition(x, y); cout << " ";
+            BorrarJugador(x, y);
+            //mover
+            if (tecla == DERECHA) x++;
+            if (tecla == IZQUIERDA) x--;
+            if (tecla == ARRIBA) y--;
+            if (tecla == ABAJO) y++;
+            //dibujar
+            //Console::SetCursorPosition(x, y); cout << "*";
+            DibujaJugador(x,y);
+        }
+    }
 
+    /*int agex = 30;
+    int agey = 20;
+
+    for (int i = 0; i < 6; i++)
+    {
+        DibujaAgente(agex+i, agey);
+        Sleep(500);
+        BorrarAgente(agex + i, agey);
+    }
 
 
     // Codigo para mostrar los colores
@@ -208,6 +329,7 @@ int main()
         color(k);
         cout << k << " Mi Juego expectacular" << endl;
     }*/
+    //Console::CursorVisible = false;
     system("pause");
     return 0;
 }
