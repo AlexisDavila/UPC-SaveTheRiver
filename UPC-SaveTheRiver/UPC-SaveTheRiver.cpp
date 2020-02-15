@@ -1,4 +1,5 @@
- #include "pch.h"
+#include "pch.h"
+#include "iostream"
 #include "windows.h"
 
 #define DERECHA 77
@@ -9,41 +10,8 @@
 using namespace System;
 using namespace std;
 
-struct Jugador
-{
-    int x, y;
-    int dx, dy;
-    int vidas;
-};
-
-void ConfiguracionBasica() {
-    Console::SetWindowSize(132, 40);
-}
-
-void ConfiguracionInicial(int* nvida, int *dificultad) {
-    // Ingreso de vidas por parte del usuario
-    do {
-        cout << "Ingrese cantidad de vidas entre 1 y 10: "; cin >> *nvida;
-    } while (*nvida < 1 || *nvida > 10);
-
-    // El usuario selecciona la dificultad del juego
-    do {
-        cout << "\n\tDificultad de juego" << endl;
-        cout << "\t-------------------" << endl;
-        cout << "  1.- Principiante\n  2.-Avanzado"<<endl;
-        cout << "\nIngrese opcion[1,2]: "; cin >> *dificultad;
-    } while (*dificultad < 1 || *dificultad > 2);
-    system("cls"); // Limpia la consola
-}
-
-void color(int X)
-{
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), X);
-
-}
-
-void DibujaMapaNivel1() {
-    int mapa[40][130] = {
+//GLOBAL
+int mapa1[40][130] = {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
         {1,1,1,1,1,1,1,1,1,4,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,4,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
         {1,1,1,1,1,1,1,1,4,4,4,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,4,4,4,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
@@ -85,25 +53,7 @@ void DibujaMapaNivel1() {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6}
     };
-
-    for (int fila = 0; fila < 40; fila++) {
-        for (int columna = 0; columna < 130; columna++) {
-            if (mapa[fila][columna] == 1) color(8);
-            if (mapa[fila][columna] == 2) color(12);
-            if (mapa[fila][columna] == 3) color(27);
-            if (mapa[fila][columna] == 4) color(10);
-            if (mapa[fila][columna] == 5) color(180);
-            if (mapa[fila][columna] == 6) color(15);
-
-            cout << (char)219;
-        }
-        cout << endl;
-    }
-}
-
-void DibujaMapaNivel2() {
-        
-    int mapa[30][130] = {
+int mapa2[30][130] = {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
         {1,1,1,1,1,1,1,1,1,4,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,4,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
         {1,1,1,1,1,1,1,1,4,4,4,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,4,4,4,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
@@ -135,15 +85,79 @@ void DibujaMapaNivel2() {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6}
     };
+int jugador[6][3] = {
+        {1,1,1},
+        {2,2,2},
+        {0,2,0},
+        {0,2,0},
+        {3,3,3},
+        {2,0,2}
+    };
+int agente[3][7] = {
+        {0,0,0,0,90,0,0},
+        {10,0,0,10,10,10,0},
+        {10,10,10,10,10,10,10}
+    };
 
+struct Jugador
+{
+    int x, y;
+    int dx, dy;
+    int vidas;
+};
+void color(int X)
+{
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), X);
+
+}
+
+void ConfiguracionBasica() {
+    Console::SetWindowSize(132, 40);
+
+}
+
+void ConfiguracionInicial(int* nvida, int *dificultad) {
+    // Ingreso de vidas por parte del usuario
+    do {
+        cout << "Ingrese cantidad de vidas entre 1 y 10: "; cin >> *nvida;
+    } while (*nvida < 1 || *nvida > 10);
+
+    // El usuario selecciona la dificultad del juego
+    do {
+        cout << "\n\tDificultad de juego" << endl;
+        cout << "\t-------------------" << endl;
+        cout << "  1.- Principiante\n  2.-Avanzado"<<endl;
+        cout << "\nIngrese opcion[1,2]: "; cin >> *dificultad;
+    } while (*dificultad < 1 || *dificultad > 2);
+    system("cls"); // Limpia la consola
+}
+
+void DibujaMapaNivel1() {
+
+    for (int fila = 0; fila < 40; fila++) {
+        for (int columna = 0; columna < 130; columna++) {
+            if (mapa1[fila][columna] == 1) color(8);
+            if (mapa1[fila][columna] == 2) color(12);
+            if (mapa1[fila][columna] == 3) color(27);
+            if (mapa1[fila][columna] == 4) color(10);
+            if (mapa1[fila][columna] == 5) color(180);
+            if (mapa1[fila][columna] == 6) color(15);
+
+            cout << (char)219;
+        }
+        cout << endl;
+    }
+}
+
+void DibujaMapaNivel2() {
     for (int fila = 0; fila < 30; fila++) {
         for (int columna = 0; columna < 130; columna++) {
-            if (mapa[fila][columna] == 1) color(8);
-            if (mapa[fila][columna] == 2) color(12);
-            if (mapa[fila][columna] == 3) color(27);
-            if (mapa[fila][columna] == 4) color(10);
-            if (mapa[fila][columna] == 5) color(180);
-            if (mapa[fila][columna] == 6) color(15);
+            if (mapa2[fila][columna] == 1) color(8);
+            if (mapa2[fila][columna] == 2) color(12);
+            if (mapa2[fila][columna] == 3) color(27);
+            if (mapa2[fila][columna] == 4) color(10);
+            if (mapa2[fila][columna] == 5) color(180);
+            if (mapa2[fila][columna] == 6) color(15);
 
             cout << (char)219;
         }
@@ -160,14 +174,6 @@ void MostrarInfomacionActual() {
 }
 
 void DibujaJugador(int x, int y) {
-    int  jugador[6][3] = {
-        {1,1,1},
-        {2,2,2},
-        {0,2,0},
-        {0,2,0},
-        {3,3,3},
-        {2,0,2}
-    };
     //int x = 46;
     //int y = 34;
 
@@ -192,14 +198,8 @@ void DibujaJugador(int x, int y) {
         cout << endl;
     }
 }
+
 void DibujaAgente(int x, int y) {
-    int agente[3][7] = {
-        {0,0,0,0,90,0,0},
-        {10,0,0,10,10,10,0},
-        {10,10,10,10,10,10,10}
-    };
-    //int x = 30;
-    //int y = 20;
 
     for (int fila = 0; fila < 3; fila++) {
         for (int columna = 0; columna < 7; columna++) {
@@ -251,6 +251,7 @@ void BorrarJugador(int x, int y) {
         cout << endl;
     }
 }
+
 void MoverJugador() {
 
 
@@ -274,46 +275,79 @@ int main()
     int x = 46;
     int y = 34;
 
-    ConfiguracionBasica();
+    int agex = 30;
+    int agey = 20;
+    int diragex = 1;
+    int diragey = 1;
+    
+    int segundosEnemigoalfa = 0;
 
+    ConfiguracionBasica();
     //ConfiguracionInicial(vidas, dificultad);
+
 
     DibujaMapaNivel1();
     //DibujaMapaNivel2();
     
-
-    /*for (int i = 0; i < 6; i++)
-    {
-        DibujaJugador(x+i, y);
-        Sleep(500);
-        BorrarJugador(x+i,y);
-    }
-    if (true)
-    {
-
-    }
-    */
     DibujaJugador(x, y);
+    DibujaAgente(agex, agey);
+    int tiempo = 0;
     char tecla;
     while (1) {
+        tiempo++;
+
         if (_kbhit()) {
             tecla = _getch();
             //borrar
             //Console::SetCursorPosition(x, y); cout << " ";
             BorrarJugador(x, y);
             //mover
-            if (tecla == DERECHA) x++;
-            if (tecla == IZQUIERDA) x--;
-            if (tecla == ARRIBA) y--;
-            if (tecla == ABAJO) y++;
+            if (tecla == DERECHA && mapa1[y][x + 3] != 2) x++;
+            if (tecla == IZQUIERDA && mapa1[y][x-1] != 2) x--;
+            if (tecla == ARRIBA && y > 0) y--;
+            if (tecla == ABAJO && y + 7 < 41) y++;
             //dibujar
             //Console::SetCursorPosition(x, y); cout << "*";
             DibujaJugador(x,y);
         }
+
+        if (tiempo % 5000 == 0) {
+            if (segundosEnemigoalfa < 10)
+            {
+                BorrarAgente(agex, agey);
+                if (mapa1[agey][agex + 7] == 2  || mapa1[agey][agex - 1] == 2)
+                {
+                    diragex = diragex * -1;
+                }
+
+                agex = agex + diragex; 
+                DibujaAgente(agex, agey);
+
+                segundosEnemigoalfa++;
+            }
+            else
+            {
+                BorrarAgente(agex, agey);
+                if (agey-1<0 || agey+5 > 41)
+                {
+                    diragey = diragey * -1;
+                }
+
+                agey = agey + diragey;
+                DibujaAgente(agex, agey);
+
+                segundosEnemigoalfa++;
+                if (segundosEnemigoalfa == 20)
+                {
+                    segundosEnemigoalfa = 0;
+                }
+            }
+
+            tiempo = 1;
+        }
     }
 
-    /*int agex = 30;
-    int agey = 20;
+    /*
 
     for (int i = 0; i < 6; i++)
     {
