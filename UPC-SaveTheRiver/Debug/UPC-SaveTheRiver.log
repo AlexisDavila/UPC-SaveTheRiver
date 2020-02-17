@@ -1,6 +1,3 @@
 ﻿  UPC-SaveTheRiver.cpp
-C:\Users\MSI\Desktop\UPC-SaveTheRiver\UPC-SaveTheRiver\UPC-SaveTheRiver.cpp(1,1): warning C4005: '__CLR_VER': redefinición de macro
-C:\Users\MSI\Desktop\UPC-SaveTheRiver\UPC-SaveTheRiver\pch.cpp : message : vea la definición anterior de '__CLR_VER'
-C:\Users\MSI\Desktop\UPC-SaveTheRiver\UPC-SaveTheRiver\UPC-SaveTheRiver.cpp(1,1): warning C4651: Se especificó '/D__CLR_VER=40804075' para el encabezado precompilado pero no para la compilación actual
   AssemblyInfo.obj : se encontró un módulo MSIL; vinculación incremental deshabilitada para MSIL; ejecutando vínculo completo
   UPC-SaveTheRiver.vcxproj -> C:\Users\MSI\Desktop\UPC-SaveTheRiver\Debug\UPC-SaveTheRiver.exe
