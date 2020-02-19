@@ -6,12 +6,56 @@
 #define IZQUIERDA 75
 #define ABAJO 80
 #define ARRIBA 72
+#define SPEEDSYSTEM 100 // Para controlar la velocidad del tiempo en ejecucion
+#define DISPARAR 32
 
 using namespace System;
 using namespace std;
 
 #pragma region Variables GLOBALES
 
+int intro[40][130] = {
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,2,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,2,7,7,7,7,7,7,2,2,7,7,7,7,7,2,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,2,7,7,7,7,7,7,2,2,2,7,7,7,7,7,7,2,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,2,2,7,7,7,7,7,7,2,2,2,2,7,7,7,7,7,2,2,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,2,2,2,7,7,7,7,7,7,7,2,2,2,2,7,7,7,7,2,2,2,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,2,2,2,7,7,7,7,7,7,7,2,2,2,7,7,7,2,2,2,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,2,2,2,7,7,7,7,7,7,2,2,7,7,7,2,2,2,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,2,2,2,2,2,7,7,2,7,7,7,2,2,2,2,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,2,2,2,2,2,2,2,2,2,2,2,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,8,8,8,8,7,7,8,8,8,8,7,7,8,7,7,7,8,7,7,8,8,8,8,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,7,7,8,7,7,8,7,7,7,8,7,7,8,8,8,8,7,7,8,8,8,8,8,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,8,7,7,7,7,7,8,7,7,8,7,7,8,7,7,7,8,7,7,8,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,7,7,8,7,7,8,7,7,8,8,8,8,7,7,7,7,7,7,7,7,7,7,8,7,7,7,8,7,7,8,7,7,8,7,7,7,8,7,7,8,7,7,7,7,7,8,7,7,7,8,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,8,8,8,8,7,7,8,8,8,8,7,7,8,7,7,7,8,7,7,8,8,8,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,7,7,7,7,8,7,7,8,7,7,8,7,7,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,7,7,8,7,7,8,7,7,7,8,7,7,8,8,8,7,7,7,8,8,8,8,8,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,8,7,7,8,7,7,8,7,7,7,8,7,8,7,7,7,8,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,7,7,7,7,8,8,8,8,7,7,8,8,8,7,7,7,7,7,7,7,7,7,7,7,8,7,8,7,7,7,7,8,7,7,7,8,7,8,7,7,7,8,7,7,7,7,7,8,7,8,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,8,8,8,8,7,7,8,7,7,8,7,7,7,7,8,7,7,7,7,8,8,8,8,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,7,7,7,7,8,7,7,8,7,7,8,7,7,7,7,7,7,7,7,7,7,7,7,7,8,7,7,8,7,7,7,8,7,7,7,7,8,7,7,7,7,8,8,8,8,7,7,8,7,7,8,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,7,7,7,7,8,7,7,8,7,7,8,8,8,8,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,9,7,7,9,7,7,7,7,7,9,9,9,9,9,9,9,7,7,7,7,9,7,7,7,7,9,9,9,7,7,7,9,9,9,7,7,7,7,9,9,9,9,9,9,7,7,7,7,9,9,9,9,9,7,7,7,7,7,9,7,7,9,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,9,7,7,9,7,7,7,7,7,7,9,7,7,7,7,7,9,7,7,7,7,9,7,7,7,7,9,7,7,9,7,9,7,7,9,7,7,7,7,9,7,7,7,7,9,7,7,7,7,9,7,7,7,7,7,7,7,7,7,7,9,7,7,9,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,9,7,7,9,7,7,7,7,7,7,7,9,9,9,9,9,9,9,7,7,7,7,9,7,7,7,7,9,7,7,7,9,7,7,7,9,7,7,7,7,9,9,9,9,9,9,7,7,7,7,9,7,7,7,7,7,7,7,7,7,7,7,9,7,7,9,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,9,7,7,9,7,7,7,7,7,7,9,7,7,9,7,7,7,7,7,7,7,9,7,7,7,7,9,7,7,7,7,7,7,7,9,7,7,7,7,9,7,7,7,7,9,7,7,7,7,9,7,7,7,7,7,7,7,7,7,7,9,7,7,9,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,9,7,7,9,7,7,7,7,7,9,7,7,7,9,7,7,7,7,7,7,9,7,7,7,7,9,7,7,7,7,7,7,7,9,7,7,7,7,9,7,7,7,7,9,7,7,7,7,9,9,9,9,9,7,7,7,7,7,9,7,7,9,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+};
 int mapa1[40][130] = {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
         {1,1,1,1,1,1,1,1,1,4,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,4,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
@@ -26,10 +70,10 @@ int mapa1[40][130] = {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
         {1,1,1,4,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,4,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
         {1,1,4,4,4,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,4,4,4,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
-        {1,4,4,4,4,4,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,4,4,4,4,4,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
-        {1,1,1,5,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,5,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
-        {1,1,1,5,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,5,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
+        {1,4,4,4,4,4,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,8,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,4,4,4,4,4,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
+        {1,1,1,5,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,8,8,8,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,5,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
+        {1,1,1,5,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,8,8,8,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,5,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,8,8,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6},
@@ -94,10 +138,14 @@ int jugador[6][3] = {
         {2,2,2},
         {8,3,8}
     };
-int agenteBeta[3][7] = {
+int agenteAlfa[3][7] = {
     {3,3,3,3,3,3,3},
     {9,3,3,9,9,9,3},
     {9,9,9,9,9,9,9}
+};
+int agenteBeta[2][5] = {
+    {3,3,2,3,3},
+    {1,1,1,1,1}
 };
 
 int colisionJugador[6][3] = {
@@ -109,22 +157,28 @@ int colisionJugador[6][3] = {
     {2,3,2}
 };
 
-struct Jugador
+struct JUGADOR
 {
     int x, y; //posicion
     int dx, dy; //direccion
     int vidas, colision; 
 };
-struct EnemigoAlfa
+struct ENEMIGOALFA
 {
     int x, y; //posicion
     int dx, dy; //direccion
     int time, speed; //tiempo y rapidez de movimiento
 };
-struct EnemigoBeta {
+struct ENEMIGOBETA {
     int x, y; //posicion
     int dx, dy; //direccion
     int time, speed; //tiempo y rapidez de movimiento
+};
+struct BALA
+{
+    int x, y;
+    int dx, dy;
+    int activado;
 };
 
 #pragma endregion
@@ -139,14 +193,13 @@ void color(int X)
 
 void ConfiguracionBasica() {
     Console::SetWindowSize(132, 42);
-
 }
 
-void ConfiguracionInicial(int* nvida, int *dificultad) {
+void ConfiguracionInicial(JUGADOR* pgamer, int *dificultad) {
     // Ingreso de vidas por parte del usuario
     do {
-        cout << "Ingrese cantidad de vidas entre 1 y 10: "; cin >> *nvida;
-    } while (*nvida < 1 || *nvida > 10);
+        cout << "Ingrese cantidad de vidas entre 1 y 10: "; cin >> pgamer->vidas;
+    } while (pgamer->vidas < 1 || pgamer->vidas > 10);
 
     // El usuario selecciona la dificultad del juego
     do {
@@ -158,6 +211,27 @@ void ConfiguracionInicial(int* nvida, int *dificultad) {
     system("cls"); // Limpia la consola
 }
 
+void DibujaIntro() {
+
+    for (int fila = 0; fila < 40; fila++) {
+        for (int columna = 0; columna < 130; columna++) {
+            if (intro[fila][columna] == 1) color(8);
+            if (intro[fila][columna] == 2) color(12);
+            if (intro[fila][columna] == 3) color(27);
+            if (intro[fila][columna] == 4) color(10);
+            if (intro[fila][columna] == 8) color(180);
+            if (intro[fila][columna] == 6) color(15);
+
+            if (intro[fila][columna] == 7) color(159);
+            if (intro[fila][columna] == 9) color(150);
+
+            cout << (char)219;
+        }
+        cout << endl;
+    }
+}
+
+
 void DibujaMapaNivel1() {
 
     for (int fila = 0; fila < 40; fila++) {
@@ -168,6 +242,7 @@ void DibujaMapaNivel1() {
             if (mapa1[fila][columna] == 4) color(10);
             if (mapa1[fila][columna] == 5) color(180);
             if (mapa1[fila][columna] == 6) color(15);
+            if (mapa1[fila][columna] == 8) color(16);
 
             if (mapa1[fila][columna] == 7) color(159);
             if (mapa1[fila][columna] == 9) color(150);
@@ -206,15 +281,14 @@ void MostrarInfomacionActual() {
 
 #pragma region JUGADOR
 
-void DibujaJugador(Jugador *gamer) {
+void DibujaJugador(JUGADOR *gamer) {
     int x = gamer->x;
     int y = gamer->y;
 
     for (int fila = 0; fila < 6; fila++) {
         for (int columna = 0; columna < 3; columna++) {
             Console::SetCursorPosition(x + columna, y + fila);
-            //mapa1[y][x] = jugador[fila][columna]; // pensado para guardar la estructura total del jugador
-            mapa1[y + fila][x + columna] = 7; //pensado al jugador como una caja o cuadrado asi se validaria con un solo color o codigo y no con varios
+            mapa1[y + fila][x + columna] = 7; 
             // pensando en la validacion para la colision con objetos u agentes
 
             if (jugador[fila][columna] == 2) {color(12);}//rojo
@@ -233,7 +307,26 @@ void DibujaJugador(Jugador *gamer) {
     }
 }
 
-void BorrarJugador(Jugador* gamer) {
+void DibujaColisionJugador(JUGADOR* gamer) {
+    int x = gamer->x;
+    int y = gamer->y;
+
+    for (int fila = 0; fila < 6; fila++) {
+        for (int columna = 0; columna < 3; columna++) {
+            Console::SetCursorPosition(x + columna, y + fila);
+            mapa1[y + fila][x + columna] = 7; //pensado al jugador como una caja o cuadrado asi se validaria con un solo color o codigo y no con varios
+            // pensando en la validacion para la colision con objetos u agentes
+
+            if (colisionJugador[fila][columna] == 2) { color(12); }//rojo
+            if (colisionJugador[fila][columna] == 3) { color(27); }//cyan
+
+            cout << (char)219;
+        }
+        cout << endl;
+    }
+}
+
+void BorrarJugador(JUGADOR* gamer) {
     int x = gamer->x;
     int y = gamer->y;
 
@@ -241,6 +334,7 @@ void BorrarJugador(Jugador* gamer) {
         for (int columna = 0; columna < 3; columna++) {
             Console::SetCursorPosition(x + columna, y + fila);
             mapa1[y + fila][x + columna] = 3;
+            Console::BackgroundColor = ConsoleColor::Cyan;
             Console::ForegroundColor = ConsoleColor::Cyan;
             cout << (char)219;
         }
@@ -248,7 +342,7 @@ void BorrarJugador(Jugador* gamer) {
     }
 }
 
-void MoverJugador(char tecla,Jugador *pgamer) {
+void MoverJugador(char tecla, JUGADOR *pgamer) {
     int x = pgamer->x;
     int y = pgamer->y;
     int TJugadorY = sizeof(jugador) / sizeof(jugador[0]);
@@ -256,30 +350,27 @@ void MoverJugador(char tecla,Jugador *pgamer) {
     int choca = 0;
     int colisiono = 0;
 
-    if (tecla == DERECHA && mapa1[y][x + 3] != 2) { // califica solo un punto
-        for (int i = 0; i < TJugadorY; i++) { // verifica si choca con algun punto del jugador del lado derecho
+    if (tecla == DERECHA && mapa1[y][x + 3] != 2) {                                   // califica solo un punto
+        for (int i = 0; i < TJugadorY; i++) {                                        // verifica si choca con algun punto del jugador del lado derecho
             if (mapa1[y + i][x + 3] == 2) choca = 1;
-
-            if (mapa1[y + i][x + 3] == 9)
-                colisiono++;
+            if (mapa1[y + i][x + 3] == 9) pgamer->colision = 1;
         }
-        if (choca == 0)
-            (pgamer->x)++;
-        if (colisiono > 0) {
-            pgamer->colision = colisiono;
-            color(30);
-            cout << colisiono << "colisono..:" << pgamer->colision << " " << tecla;
-        }
+        if (choca == 0 && pgamer->colision == 0) (pgamer->x)++;
     }
 
     if (tecla == IZQUIERDA && mapa1[y][x - 1] != 2) {
         for (int i = 0; i < TJugadorY; i++) {
             if (mapa1[y + i][x - 1] == 2) choca = 1;
-
-            if (mapa1[y + i][x - 1] == 9) pgamer->colision = 1;
+            if (mapa1[y + i][x - 1] == 9) { 
+                pgamer->colision = 1; 
+                //color(40);
+                //cout /*<< colisiono*/ << "colisono..:" << pgamer->colision /*<< " " << tecla*/ << endl;
+            }
         }
-        if (choca == 0)
+        if (choca == 0 && pgamer->colision == 0)
             (pgamer->x)--;
+
+        //pgamer->colision = 0;
     }
 
     if (tecla == ARRIBA && y > 0) {
@@ -287,21 +378,29 @@ void MoverJugador(char tecla,Jugador *pgamer) {
             if (mapa1[y - 1][x + i] == 2) choca = 1;
             if (mapa1[y - 1][x + i] == 9) {
                 pgamer->colision = 1;
-                color(30);
-                cout << colisiono << "colisono..:" << pgamer->colision << " " << tecla<<endl;
+                //color(30);
+                //cout /*<< colisiono*/ << "colisono..:" << pgamer->colision /*<< " " << tecla*/<<endl;
             }
         }
-        if (choca == 0)
+        if (choca == 0 && pgamer->colision == 0)
             (pgamer->y)--;
+
+        //pgamer->colision = 0;
     }
 
     if (tecla == ABAJO && y + 7 < 41) {
         for (int i = 0; i < TJugadorX; i++) {
             if (mapa1[y + TJugadorY][x + i] == 2) choca = 1;
-            if (mapa1[y + TJugadorY][x + i] == 9) pgamer->colision = 1;
+            if (mapa1[y + TJugadorY][x + i] == 9) {
+                pgamer->colision = 1;
+                //color(20);
+                //cout /*<< colisiono*/ << "colisono..:" << pgamer->colision /*<< " " << tecla*/ << endl;
+            }
         }
-        if (choca == 0)
+        if (choca == 0 && pgamer->colision == 0)
             (pgamer->y)++;
+
+        //pgamer->colision = 0;
     }
 }
 
@@ -309,9 +408,13 @@ void MoverJugador(char tecla,Jugador *pgamer) {
 
 #pragma region AGENTES
 
-void DibujaAgenteBeta(EnemigoBeta *pbeta) {
-    int x = pbeta->x;
-    int y = pbeta->y;
+void GenerarListaAgentes() {
+
+}
+
+void DibujaAgenteAlfa(ENEMIGOALFA *palfa) {
+    int x = palfa->x;
+    int y = palfa->y;
 
     for (int fila = 0; fila < 3; fila++) {
         for (int columna = 0; columna < 7; columna++) {
@@ -321,8 +424,8 @@ void DibujaAgenteBeta(EnemigoBeta *pbeta) {
                 << mapa1[y + fila][x + columna] 
                 << mapa1[y + fila][x + columna+1];*/
             //Console::SetCursorPosition(x + columna, y + fila);
-            if (agenteBeta[fila][columna] == 3) Console::ForegroundColor = ConsoleColor::Cyan;
-            if (agenteBeta[fila][columna] == 9) color(5);//morado
+            if (agenteAlfa[fila][columna] == 3) Console::ForegroundColor = ConsoleColor::Cyan;
+            if (agenteAlfa[fila][columna] == 9) color(5);//morado
 
             if (fila == 0 && columna == 4) {
                 color(189);
@@ -334,14 +437,14 @@ void DibujaAgenteBeta(EnemigoBeta *pbeta) {
     }
 }
 
-void BorrarAgenteBeta(EnemigoBeta* pbeta) {
-    int x = pbeta->x;
-    int y = pbeta->y;
+void BorrarAgenteAlfa(ENEMIGOALFA* palfa) {
+    int x = palfa->x;
+    int y = palfa->y;
 
     for (int fila = 0; fila < 3; fila++) {
         for (int columna = 0; columna < 7; columna++) {
             Console::SetCursorPosition(x + columna, y + fila);
-            mapa1[y][x] = 3;
+            mapa1[y + fila][x + columna] = 3;
 
             Console::ForegroundColor = ConsoleColor::Cyan;
             cout << (char)219;
@@ -350,59 +453,112 @@ void BorrarAgenteBeta(EnemigoBeta* pbeta) {
     }
 }
 
-void MoverAgenteAlfa(int x, int y) {
+void MoverAgenteAlfa(ENEMIGOALFA* palfa) {
     // El movimiento debe ser horizontal y vertical
 
+}
+
+void DibujaAgenteBeta(ENEMIGOBETA* pbeta) {
+    int x = pbeta->x;
+    int y = pbeta->y;
+
+    for (int fila = 0; fila < 2; fila++) {
+        for (int columna = 0; columna < 5; columna++) {
+            Console::SetCursorPosition(x + columna, y + fila);
+            mapa1[y + fila][x + columna] = 1; // recordar numero para hacer la validacion de colision
+            /*Console::SetCursorPosition(90, 20+columna); cout << "mapa1[" << y << " + " << fila << "][" << x << " + " << columna << "] = "
+                << mapa1[y + fila][x + columna]
+                << mapa1[y + fila][x + columna+1];
+                Console::SetCursorPosition(x + columna, y + fila);*/
+            if (agenteBeta[fila][columna] == 1) color(8);// gris
+            if (agenteBeta[fila][columna] == 2) color(12);// rojo
+            if (agenteBeta[fila][columna] == 3) Console::ForegroundColor = ConsoleColor::Cyan;
+
+            if (fila == 0 && columna == 3) {
+                //color(18);
+                Console::BackgroundColor = ConsoleColor::Cyan;
+                Console::ForegroundColor = ConsoleColor::Red;
+                cout << (char)223;
+            }
+            else { cout << (char)219; }
+        }
+        cout << endl;
+    }
+}
+
+void BorrarAgenteBeta(ENEMIGOBETA* pbeta) {
+    int x = pbeta->x;
+    int y = pbeta->y;
+
+    for (int fila = 0; fila < 2; fila++) {
+        for (int columna = 0; columna < 5; columna++) {
+            Console::SetCursorPosition(x + columna, y + fila);
+            mapa1[y + fila][x + columna] = 3;
+
+            //Console::ForegroundColor = ConsoleColor::Cyan;
+            cout << (char)219;
+        }
+        cout << endl;
+    }
 }
 
 #pragma endregion
 
 int main()
 {
+
 #pragma region Variables
 
-    //Variables
-    Jugador *gamer = new Jugador;
+    JUGADOR* gamer = new JUGADOR;
     gamer->x = 46; //46
     gamer->y = 34; //34
     gamer->dx = 1;
     gamer->dy = 1;
-    gamer->vidas = 0;
+    gamer->vidas = 3;
     gamer->colision = 0;
 
-    EnemigoBeta *beta = new EnemigoBeta();
-    beta->x = 40;
-    beta->y = 25;
+    ENEMIGOALFA* alfa = new ENEMIGOALFA();
+    alfa->x = 40;
+    alfa->y = 25;
+    alfa->dx = 1;
+    alfa->dy = 1;
+    alfa->time = 10;
+    alfa->speed = 0;
+
+    ENEMIGOBETA* beta = new ENEMIGOBETA();
+    beta->x = 20;
+    beta->y = 35;
     beta->dx = 1;
     beta->dy = 1;
-    beta->time = 0;
+    beta->time = 10;
+    beta->speed = 0;
     
-    /*int* vidas = new int;
-    *vidas = 0;
-    int* dificultad = new int;
-    *dificultad = 0;
+    BALA *arregloBalas[5];
 
-    int agex = 30;
-    int agey = 20;
-    int diragex = 1;
-    int diragey = 1;
-    
-    int segundosEnemigoalfa = 0;*/
+    int* dificultad = new int; *dificultad = 0; /*int segundosEnemigoalfa = 0;*/
 
 #pragma endregion
 
     ConfiguracionBasica();
-    //ConfiguracionInicial(vidas, dificultad);
+    DibujaIntro();
+    _sleep(3000);
+    system("cls");
 
-#pragma region Desarrollo del juego
+    ConfiguracionInicial(gamer, dificultad);
 
     DibujaMapaNivel1();
     //DibujaMapaNivel2();
-    
     DibujaJugador(gamer);
+    DibujaAgenteAlfa(alfa);
     DibujaAgenteBeta(beta);
+
+#pragma region Desarrollo del juego
+
     int tiempo = 0;
     char tecla;
+    int iBala = 0;
+    int activa_bala = 0;
+
     while (1) {
         tiempo++;
 
@@ -410,66 +566,210 @@ int main()
             tecla = _getch();
 
             // Movimiento del jugador
-            if (tecla == ARRIBA || tecla == DERECHA || tecla == ABAJO || tecla == IZQUIERDA)
-            {
+            if (tecla == ARRIBA || tecla == DERECHA || tecla == ABAJO || tecla == IZQUIERDA) {
                 BorrarJugador(gamer);
 
                 MoverJugador(tecla, gamer);
                 // preguntar si colisiona, si no que dibuje, de lo contrario que dibuje la colision
-                /*if (gamer->colision > 1) {
-                   x
-                    DibujaJugador(gamer);
+                if (gamer->colision/* == 1*/) {
+                    //QUITAR VIDA
+                    gamer->vidas = gamer->vidas - 1;
+
+                    if (gamer->vidas == 0) // FIN DEL JUEGO
+                    {
+                        DibujaColisionJugador(gamer);
+                        BorrarJugador(gamer);
+                        //MOSTRAR PANTALLA
+                    }
+                    else //CONTINUA EL JUEGO
+                    {
+                        DibujaColisionJugador(gamer);
+                        _sleep(100);
+                        BorrarJugador(gamer);
+                        gamer->x = 46; //46
+                        gamer->y = 34; //34
+                        DibujaJugador(gamer);
+                    }
+                    //DibujaColisionJugador(gamer);
                     gamer->colision = 0;
+                    
+                    //VALIDAR SI VIDA ES MENOR A 0 PARA PODER MOSTRAR EFECTO DE COLISION Y FINALIZAR EL JUEGO.
+
+                    //color(20);
+                    //cout << "colisono..";
                 }
                 else
-                {*/
-                DibujaJugador(gamer); 
-                /*Console::SetCursorPosition(0, 0);
-                DibujaMapaNivel1();
-                */
-                //}
+                {
+                    DibujaJugador(gamer); 
+                    /*Console::SetCursorPosition(0, 0);
+                    DibujaMapaNivel1();*/
+                }
+            }
+
+            if (tecla == DISPARAR) {
+                iBala++; // 0
+                arregloBalas[iBala] = new BALA;
+                arregloBalas[iBala]->x = gamer->x + 1;
+                arregloBalas[iBala]->y = gamer->y - 1;
+                arregloBalas[iBala]->dy = 1;
+                arregloBalas[iBala]->activado = 1; 
+
+                
+                    Console::SetCursorPosition(arregloBalas[iBala]->x, arregloBalas[iBala]->y - i);
+                    mapa1[arregloBalas[iBala]->y][arregloBalas[iBala]->x] = 10; // pensando en la validacion para la colision con objetos u agentes
+                    color(14);//amarillo
+                    cout << (char)219;
+                
+                //activa_bala = 1;
             }
         }
+
+        if (tiempo % 5000 * SPEEDSYSTEM == 0) {
+
+            for (int i = 0; i < iBala; i++)
+            {
+                if (arregloBalas[i]->activado) // si es 1 ingresa ya que lo toma como true
+                {
+                    int x = arregloBalas[i]->x;
+                    int y = arregloBalas[i]->y;
+
+                    //Borrar bala
+                    
+                        //color(56); cout << arregloBalas[i]->y;
+                    Console::SetCursorPosition(x, y);
+                    mapa1[y][x] = 3; // pensando en la validacion para la colision con objetos u agentes
+                    Console::BackgroundColor = ConsoleColor::Cyan;
+                    Console::ForegroundColor = ConsoleColor::Cyan;
+                    cout << (char)219;
+                   
+                    //Mover bala
+
+                    arregloBalas[i]->y= arregloBalas[i]->y - 1;
+
+                    //Dibujar bala
+                    
+                    Console::SetCursorPosition(x, y);
+                    mapa1[y][x] = 10; // pensando en la validacion para la colision con objetos u agentes
+                    color(14);//amarillo
+                    cout << (char)219;
+                    
+                }
+            }
+            //color(45); cout << " : " << tiempo;
+            
+            /*Console::SetCursorPosition(arregloBalas[k]->x, arreglo[k]->y); cout << " ";
+
+            if (arreglo[k]->y > 0)
+                arreglo[k]->y = arreglo[k]->y + arreglo[k]->dy;
+
+            Console::SetCursorPosition(arreglo[k]->x, arreglo[k]->y); cout << "*";
+            k++;
+            if (k > i) k = 0;
+
+            t = 1;*/
+        }
+        if (activa_bala && tiempo % 50*SPEEDSYSTEM == 0)
+        {
+            activa_bala = 0;
+        }
+
         // Movimiento del agente y todo lo referido a él
-        /*
-        if (tiempo % 5000 == 0) {
-            if (segundosEnemigoalfa < 10)
-            {
-                BorrarAgenteBeta(agex, agey);
-                // mover agente alfa
-                if (mapa1[agey][agex + 7] == 2  || mapa1[agey][agex - 1] == 2)
-                {
-                    diragex = diragex * -1;
-                }
+        
+        //if (tiempo % (50 * SPEEDSYSTEM) == 0) {
+        //    if (segundosEnemigoalfa < 10)
+        //    {
+        //        BorrarAgenteBeta(agex, agey);
+        //        // mover agente alfa
+        //        if (mapa1[agey][agex + 7] == 2  || mapa1[agey][agex - 1] == 2)
+        //        {
+        //            diragex = diragex * -1;
+        //        }
 
-                agex = agex + diragex; 
+        //        agex = agex + diragex; 
 
-                DibujaAgenteBeta(agex, agey);
+        //        DibujaAgenteBeta(agex, agey);
 
-                segundosEnemigoalfa++;
-            }
-            else
-            {
-                BorrarAgenteBeta(agex, agey);
-                if (agey-1<0 || agey+5 > 41)
-                {
-                    diragey = diragey * -1;
-                }
+        //        segundosEnemigoalfa++;
+        //    }
+        //    else
+        //    {
+        //        BorrarAgenteBeta(agex, agey);
+        //        if (agey-1<0 || agey+5 > 41)
+        //        {
+        //            diragey = diragey * -1;
+        //        }
 
-                agey = agey + diragey;
-                DibujaAgenteBeta(agex, agey);
+        //        agey = agey + diragey;
+        //        DibujaAgenteBeta(agex, agey);
 
-                segundosEnemigoalfa++;
-                if (segundosEnemigoalfa == 20)
-                {
-                    segundosEnemigoalfa = 0;
-                }
-            }
-            tiempo = 1;
-        }*/
+        //        segundosEnemigoalfa++;
+        //        if (segundosEnemigoalfa == 20)
+        //        {
+        //            segundosEnemigoalfa = 0;
+        //        }
+        //    }
+        //    tiempo = 1;
+        //}
     }
 
 #pragma endregion
+
+
+    //Bala* bala;
+    //Bala* arregloBalas[3];
+
+    //char tecla;
+    //int activa_bala = 0;
+    //int x = 10, y = 10, dx = 1;
+    //Console::SetCursorPosition(x, y);
+    //cout << "*";
+    //int i = -1; // indice del arreglo de balas.
+    //int k = 0; // 
+    //int t = 0; // tiempo
+    //while (1) {
+
+    //    if (t % 3999 == 0) {
+    //        //borrar
+    //        Console::SetCursorPosition(x, y);	cout << " ";
+    //        //mover
+    //        if (x == 79) dx = dx * -1; // CAMBIA DE DIRECCION
+    //        if (x == 0) dx = dx * -1; 
+
+    //        x += dx; //MUEVE
+    //        //dibujar
+    //        Console::SetCursorPosition(x, y);	cout << "*";
+
+    //        if (activa_bala) {
+
+    //            Console::SetCursorPosition(arregloBalas[k]->x, arregloBalas[k]->y); cout << " "; // borra
+
+    //            if (arregloBalas[k]->y < 39) // valida que no se pase del limite
+    //                arregloBalas[k]->y = arregloBalas[k]->y + arregloBalas[k]->dy; // mueve las coordenadas
+
+    //            Console::SetCursorPosition(arregloBalas[k]->x, arregloBalas[k]->y); cout << "."; // dibuja
+    //            k++;
+    //            if (k > i) k = 0;
+    //        }
+    //        t = 1;
+    //    }
+    //    t++;
+
+    //    if (_kbhit()) {
+
+    //        tecla = _getch();
+    //        if (tecla == DISPARAR) {
+    //            i++; // 0
+    //            arregloBalas[i] = new Bala;
+    //            arregloBalas[i]->x = x;
+    //            arregloBalas[i]->y = y;
+    //            arregloBalas[i]->dy = 1;
+
+    //            activa_bala = 1;
+    //        }
+    //    }
+    //}
+
+
 
 
     // Codigo para mostrar los colores
